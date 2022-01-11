@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if current_user.is_authenticated %}
+        <h1 class="container">Your Todos</h1>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Sno</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Date Posted</th>
+                    <th>Actions</th>
+                    <th>Actions</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for todo in alltodos.items %}
+                    <tr>
+                        <th scope="row">{{loop.index}}</th>
+                        <td>{{todo.title}}</td>
+                        <td>{{todo.content}}</td>
+                        <td>{{todo.date_posted.strftime('%Y-%m-%d')}}</td>
+                        <td><a href="{{ url_for('todos.update_todo', todo_id=todo.id) }}" type="button" class="btn btn-dark">Update</a></td>
+                        <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button></td>
+                            <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <form action="{{ url_for('todos.delete_todo', todo_id=todo.id) }}" method="POST">
+                                                    <input class="btn btn-danger" type="submit" value="Delete">
+                                                </form>
+                                                </div>
+                                            </div>
+                                            </div>
+                            </div>
+                        <td>
+                            {% if todo.status %}
+                            <div class="form-check">
+                               <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                            </div>  
+                            {% else %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                             </div>
+                            {%endif%}
+                        </td>
+                    </tr>
+                {%endfor%}
+                </tbody>
+            </table>
+        <!-- #pagination -->
+        {% for page_num in alltodos.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+            {% if page_num %}
+                {% if alltodos.page==page_num %}
+                <a class="btn btn-dark mb-4"href="{{url_for('main.home',page=page_num)}}">{{page_num}}</a>
+                {% else %}
+                <a class="btn btn-outline-dark mb-4"href="{{url_for('main.home',page=page_num)}}">{{page_num}}</a>
+                {% endif%}
+            {% else %}
+            ...
+            {% endif %}
+        {%endfor%}
+    {%else%}
+        <h1 style="text-align:center">TODOS MANAGER</h1>
+        <p style=" margin-left: auto; margin-right: auto;  color:black; font-size: 2.5rem; text-align:center;">Why take a pen and diary everywhere, along with you when you can store your to-dos using our app. Welcome to todos manager, here you can store, add and delete your todos. Access them anywhere, anytime.
+            Log In or Sign up and start using our ToDo manager.</p>
+    {%endif%}
+{% endblock %}
+
+
